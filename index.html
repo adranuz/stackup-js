@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBBA bank</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="card">
+        <form id="form" class="card-body">
+          <div class="mb-3">
+            <label for="disabledSelect" class="form-label">Select Action</label>
+            <select id="disabledSelect" class="form-select" name="action">
+              <option value="withdraw">Withdraw</option>
+              <option value="add">Add</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="disabledSelect" class="form-label">Amount</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" aria-label="Amount (to the nearest dollar)" name="amount">
+              <span class="input-group-text">.00</span>
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+      <h1 id="name">Adrian Garcia Account</h1>
+      <p>$<span id="founds">400</span></p>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+    integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+    crossorigin="anonymous"></script>
+  <script>
+    class Account {
+      constructor(founds, name) {
+        this.setName(name)
+        this.setFounds(founds)
+      }
+      setName(name) {
+        this.name = name
+        document.getElementById('name').innerText = `${name} Account`
+      }
+      setFounds(founds) {
+        this.founds = founds
+        document.getElementById('founds').innerText = founds
+      }
+    }
+    class Atm {
+      constructor(account) {
+        this.account = account;
+        document.getElementById('form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          this.submit(event);
+        })
+      }
+      withdrawFounds(amount) {
+        this.account.setFounds(this.account.founds - amount)
+      }
+      addFounds(amount) {
+        this.account.setFounds(this.account.founds + (amount*1))
+      }
+      submit(event) {
+        const data = new FormData(event.target)
+        // obtain data as object
+        const objectData = {}
+        for (const [key, value] of data) {
+          objectData[key] = value
+        }
+
+        // validate amount
+        try {
+          if (objectData.amount < 0) {
+            throw new Error('Amount cannot be negative');
+          } else if (objectData.amount == 0) {
+            throw new Error('Amount cannot be 0');
+          } else if (!objectData.amount) {
+            throw new Error('Amount cannot be empty');
+          } else if (isNaN(objectData.amount)) {
+            throw new Error('Amount must be a number');
+          } else {
+            this.action(objectData.action, objectData.amount)
+            alert(`Transaccion finished successfully`)
+          }
+        } catch (e) {
+          alert(e)
+        } finally {
+          event.target.reset()
+        }
+
+      }
+      action(action, amount) {
+        // const isValidAmount = this.validAmount(amount)
+        // if (isValidAmount) {
+        switch (action) {
+          case 'add':
+            this.addFounds(amount)
+            break;
+          case 'withdraw':
+            this.withdrawFounds(amount)
+            break;
+        }
+        // }
+      }
+      validAmount(input) {
+        if (input < 0) {
+          throw new Error('Input cannot be negative');
+        } else if (input === '') {
+          throw new Error('Input cannot be empty');
+        } else if (isNaN(input)) {
+          throw new Error('Input must be a number');
+        } else {
+
+        }
+      }
+    }
+
+    const account = new Account(10000, 'Adrian Garcia')
+    const atm = new Atm(account)
+
+  </script>
+
+</html>
